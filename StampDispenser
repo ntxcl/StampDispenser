@@ -1,0 +1,99 @@
+import java.util.*;
+/**
+ * Facilitates dispensing stamps for a postage stamp machine.
+ */
+public class StampDispenser
+{
+    /**
+     * Constructs a new StampDispenser that will be able to dispense the given 
+     * types of stamps.
+     *
+     * @param stampDenominations The values of the types of stamps that the 
+     *     machine should have.  Should be sorted in descending order and 
+     *     contain at least a 1.
+     */
+    ArrayList<Integer> arrayList = new ArrayList<Integer>();
+
+    public StampDispenser(int[] stampDenominations)
+    {
+      
+      //create a new array list that can store integers from stampDeno
+      //sort the new array in descending order and process.
+     
+
+      for (int value:stampDenominations){
+
+        arrayList.add(value);
+      }
+      
+      //check if this series of stampDeno contains at least 1
+      //sort it if it does, error message if it does not
+      if (arrayList.contains(1)){
+
+        Collections.sort(arrayList, Collections.reverseOrder()); 
+       // System.out.println(arrayList);
+
+      } else {
+
+        System.err.println ("shit shit");
+      }
+    }
+ 
+    /**
+     * Returns the minimum number of stamps that the machine can dispense to
+     * fill the given request.
+     *
+     * @param request The total value of the stamps to be dispensed.
+     */
+    public int calcMinNumStampsToFillRequest(int request)
+    {  
+            
+      if (request == 0 || request < 0) { 
+
+        System.err.println ("Please enter a proper value.");
+        return -1;
+
+        } else {
+        
+        //initial stamp array starting from index 1
+        int minStamp[] = new int[request+1];
+        //set the first element to 0 and others to the maximum value
+        //use max_value - 1 instead of max_value because the loop below will access
+        //max_value + 1 which will cause problem
+        minStamp[0] = 0;
+        for(int i = 1; i <= request; i++){
+            minStamp[i] = Integer.MAX_VALUE - 1;
+        }
+        //2D array that keeps min stamp array updated, and makes sure each element inside
+        //minStamp is the smallest stamp number returns
+        for(int i = 0; i < arrayList.size(); i++){
+            for(int j = 1; j <= request; j++){
+
+                //keep looping if request bigger or equal to one of the denominations
+                if(j >= arrayList.get(i)){
+                    //take the min value as every time request value subtract from denomination
+                    //keep updated, +1 means we start from index 1
+                    minStamp[j] = Math.min(minStamp[j], minStamp[j - arrayList.get(i)] + 1);
+                }
+            }
+        }
+        return minStamp[request];
+      }
+    }
+    
+    public static void main(String[] args)
+    {
+      int[] denominations = {  30, 2, 10, 90, 6, 24, 1 };
+      StampDispenser stampDispenser = new StampDispenser(denominations);
+      assert stampDispenser.calcMinNumStampsToFillRequest(18) == 3;
+      //take the input of how much a customer on buying stamp
+      int buyStamp;
+      Scanner in = new Scanner(System.in);
+      System.out.print("Please insert your desired value of stamps: ");
+      buyStamp = in.nextInt();
+
+      //call to run the main algorithm for min output stamps
+      System.out.println("The minimum number of stamps you can get is: " + 
+        stampDispenser.calcMinNumStampsToFillRequest(buyStamp));
+    }
+}
